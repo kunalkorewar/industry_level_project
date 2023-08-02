@@ -16,7 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kk.industrylevelproject.model.Student;
 import com.kk.industrylevelproject.service.IStudentService;
 
-@PropertySource({"classpath:jdbcQueries.properties"})
+@PropertySource({ "classpath:jdbcQueries.properties" })
 @Repository("studentRepository")
 public class StudentRepoImpl implements IStudentService {
 
@@ -25,7 +25,7 @@ public class StudentRepoImpl implements IStudentService {
 	@Autowired
 	private NamedParameterJdbcOperations namedParameter;
 
-	@Value("{add_student_details}")
+	@Value("${add_student_details}")
 	private String addStudentDetails;
 
 	@Override
@@ -39,15 +39,16 @@ public class StudentRepoImpl implements IStudentService {
 			GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
 
 			MapSqlParameterSource parameters = new MapSqlParameterSource()
-					
+
 					.addValue("param1", student.getStudentName())
 					.addValue("param2", student.getStudentLastName())
 					.addValue("param3", student.getStudentClgName())
 					.addValue("param4", student.getStudentBranch());
 
-			namedParameter.update(addStudentDetails, parameters, keyHolder, new String[] { "STUDENTID" });
+			namedParameter.update(addStudentDetails, parameters, keyHolder);
 
 			id = keyHolder.getKey().longValue();
+			
 			if (id > 0) {
 				student.setStudentID(id);
 			}
@@ -61,7 +62,6 @@ public class StudentRepoImpl implements IStudentService {
 			logger.error("context", ex);
 
 		}
-
 		return id;
 	}
 
